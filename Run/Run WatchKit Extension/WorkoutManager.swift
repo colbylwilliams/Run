@@ -13,7 +13,6 @@ class WorkoutManager: NSObject, HKWorkoutSessionDelegate {
     
     let healthStore = HKHealthStore()
     
-    
     let workoutConfiguration: HKWorkoutConfiguration = {
        
         let config = HKWorkoutConfiguration()
@@ -24,15 +23,19 @@ class WorkoutManager: NSObject, HKWorkoutSessionDelegate {
         return config
     }()
     
-
     var workoutSession : HKWorkoutSession?
     
     var heartRateQuery: HKAnchoredObjectQuery?
+    
     var heartRateQueryAnchor: HKQueryAnchor?
 
     let heartRateUnit = HKUnit(from: "count/min")
+    
     let heartRateQuantityType = HKQuantityType.quantityType(forIdentifier: .heartRate)!
     
+    
+    
+    // MARK: - HealthStore Availability & Authorization
     
     func checkHealthStoreAvailability(handler: @escaping (Bool, Error?) -> ()) {
 
@@ -72,7 +75,6 @@ class WorkoutManager: NSObject, HKWorkoutSessionDelegate {
             healthStore.end(session)
         }
     }
-    
     
     
     // MARK: - Monitor Heart Rate
