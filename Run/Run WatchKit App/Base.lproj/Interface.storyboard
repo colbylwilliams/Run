@@ -1,16 +1,42 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder.WatchKit.Storyboard" version="3.0" toolsVersion="11134" systemVersion="15F34" targetRuntime="watchKit" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="AgC-eL-Hgc">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder.WatchKit.Storyboard" version="3.0" toolsVersion="14109" targetRuntime="watchKit" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="DvV-ZT-jDQ">
+    <device id="watch42" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11106"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBWatchKitPlugin" version="11055"/>
+        <deployment identifier="watchOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBWatchKitPlugin" version="14031"/>
     </dependencies>
     <scenes>
-        <!--Interface Controller-->
-        <scene sceneID="aou-V4-d1y">
+        <!--NavigationController-->
+        <scene sceneID="P02-rn-fQD">
             <objects>
-                <controller id="AgC-eL-Hgc" customClass="InterfaceController" customModuleProvider="target"/>
+                <controller identifier="NavigationController" id="DvV-ZT-jDQ" customClass="NavigationController" customModule="Run_WatchKit_App" customModuleProvider="target">
+                    <items>
+                        <table alignment="left" verticalAlignment="center" id="3RD-c6-bq1">
+                            <items>
+                                <tableRow identifier="NavigationRow" id="EKy-jj-sfU" customClass="NavigationRowController" customModule="Run_WatchKit_App" customModuleProvider="target">
+                                    <group key="rootItem" width="1" height="60" alignment="left" id="BES-oL-OTi">
+                                        <items>
+                                            <label alignment="left" verticalAlignment="center" text="Workout" id="hsX-h9-QpP">
+                                                <fontDescription key="font" type="system" weight="medium" pointSize="18"/>
+                                            </label>
+                                        </items>
+                                    </group>
+                                    <connections>
+                                        <outlet property="titleLabel" destination="hsX-h9-QpP" id="Qoa-tX-SY3"/>
+                                    </connections>
+                                </tableRow>
+                            </items>
+                        </table>
+                    </items>
+                    <connections>
+                        <outlet property="table" destination="3RD-c6-bq1" id="la9-Hn-iUP"/>
+                    </connections>
+                </controller>
             </objects>
-            <point key="canvasLocation" x="220" y="345"/>
+            <point key="canvasLocation" x="220" y="341"/>
         </scene>
         <!--Static Notification Interface Controller-->
         <scene sceneID="AEw-b0-oYE">
@@ -28,12 +54,112 @@
             </objects>
             <point key="canvasLocation" x="220" y="643"/>
         </scene>
+        <!--NewWorkoutController-->
+        <scene sceneID="Mm5-iK-r2W">
+            <objects>
+                <controller identifier="NewWorkoutController" id="pRW-E4-EQf" customClass="NewWorkoutController" customModule="Run_WatchKit_App" customModuleProvider="target">
+                    <items>
+                        <group alignment="center" spacing="8" id="lvw-0i-6A2">
+                            <items>
+                                <picker width="60" height="50" alignment="left" focusStyle="stack" id="Wkv-pj-qzi">
+                                    <connections>
+                                        <action selector="hourPickerActionWithIndex:" destination="pRW-E4-EQf" id="ng0-D2-bxW"/>
+                                    </connections>
+                                </picker>
+                                <picker width="60" height="50" alignment="left" focusStyle="stack" id="ATf-78-pOP">
+                                    <connections>
+                                        <action selector="minutePickerActionWithIndex:" destination="pRW-E4-EQf" id="gwz-cy-fwM"/>
+                                    </connections>
+                                </picker>
+                            </items>
+                            <edgeInsets key="margins" left="0.0" right="0.0" top="12" bottom="0.0"/>
+                        </group>
+                        <group alignment="center" spacing="8" id="G1x-VL-jLy">
+                            <items>
+                                <label width="60" alignment="left" text="hours" textAlignment="center" id="nI7-e9-7MP">
+                                    <color key="textColor" red="0.94901960780000005" green="0.95686274510000002" blue="1" alpha="0.79773116438356162" colorSpace="custom" customColorSpace="sRGB"/>
+                                    <fontDescription key="font" type="system" pointSize="11"/>
+                                </label>
+                                <label width="60" alignment="left" text="minutes" textAlignment="center" id="a59-Zs-JeZ">
+                                    <color key="textColor" red="0.94901960780000005" green="0.95686274510000002" blue="1" alpha="0.79773116438356162" colorSpace="custom" customColorSpace="sRGB"/>
+                                    <fontDescription key="font" type="system" pointSize="11"/>
+                                </label>
+                            </items>
+                        </group>
+                        <button width="1" alignment="left" verticalAlignment="bottom" title="Save" id="2hK-SX-p0U">
+                            <color key="titleColor" red="0.015686274510000001" green="0.87058823529999996" blue="0.4431372549" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <color key="backgroundColor" red="0.015686274510000001" green="0.87058823529999996" blue="0.4431372549" alpha="0.14000000000000001" colorSpace="custom" customColorSpace="sRGB"/>
+                            <connections>
+                                <action selector="saveButtonAction" destination="pRW-E4-EQf" id="XXn-4G-rfs"/>
+                            </connections>
+                        </button>
+                    </items>
+                    <connections>
+                        <outlet property="hourPicker" destination="Wkv-pj-qzi" id="IZ4-qP-QOT"/>
+                        <outlet property="minutePicker" destination="ATf-78-pOP" id="VtI-Z8-bvY"/>
+                        <outlet property="saveButton" destination="2hK-SX-p0U" id="5sB-o9-ySh"/>
+                    </connections>
+                </controller>
+            </objects>
+            <point key="canvasLocation" x="220" y="47"/>
+        </scene>
+        <!--ActiveWorkoutController-->
+        <scene sceneID="fP3-Oa-g0X">
+            <objects>
+                <controller identifier="ActiveWorkoutController" id="eSe-vL-J60" customClass="ActiveWorkoutController" customModule="Run_WatchKit_App" customModuleProvider="target">
+                    <items>
+                        <group width="1" alignment="left" id="ETf-2u-7Un">
+                            <items>
+                                <label alignment="left" verticalAlignment="center" text="146" id="cY9-Mg-Qga">
+                                    <fontDescription key="font" type="system" weight="medium" pointSize="34"/>
+                                </label>
+                                <label alignment="left" verticalAlignment="center" text="BPM" id="8L4-Od-OXP"/>
+                            </items>
+                        </group>
+                        <button alignment="center" verticalAlignment="center" id="gjU-zM-gxU">
+                            <group key="contentGroup" width="1" alignment="left" layout="overlap" id="py7-BV-X98">
+                                <items>
+                                    <timer width="1" alignment="left" verticalAlignment="center" hidden="YES" minimumScaleFactor="0.90000000000000002" previewedSeconds="0" id="Cnc-fM-0Zh">
+                                        <fontDescription key="font" type="system" weight="medium" pointSize="40"/>
+                                    </timer>
+                                    <timer width="1" alignment="left" verticalAlignment="center" hidden="YES" minimumScaleFactor="0.90000000000000002" previewedSeconds="0" id="97E-49-UZI">
+                                        <fontDescription key="font" type="system" weight="medium" pointSize="40"/>
+                                    </timer>
+                                    <label alignment="left" text="0:00:00" id="nty-ah-Zv4">
+                                        <fontDescription key="font" type="system" weight="medium" pointSize="40"/>
+                                    </label>
+                                </items>
+                            </group>
+                            <connections>
+                                <action selector="timerGroupButtonAction" destination="eSe-vL-J60" id="sZA-kJ-ZxU"/>
+                            </connections>
+                        </button>
+                        <button width="1" alignment="left" verticalAlignment="bottom" title="Start Workout" id="r9S-cZ-w9I">
+                            <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
+                            <color key="backgroundColor" red="0.0" green="0.96078431369999995" blue="0.91764705879999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <connections>
+                                <action selector="workoutButtonAction" destination="eSe-vL-J60" id="fSc-Xk-AwR"/>
+                            </connections>
+                        </button>
+                    </items>
+                    <connections>
+                        <outlet property="decreasingTimer" destination="97E-49-UZI" id="lFd-Lw-yMm"/>
+                        <outlet property="heartRateLabel" destination="cY9-Mg-Qga" id="a4X-3x-8z0"/>
+                        <outlet property="heartRateUnitLabel" destination="8L4-Od-OXP" id="0pk-FP-rHN"/>
+                        <outlet property="increasingTimer" destination="Cnc-fM-0Zh" id="kla-Wp-0ax"/>
+                        <outlet property="totalTimeLabel" destination="nty-ah-Zv4" id="l9n-Ou-a0R"/>
+                        <outlet property="workoutButton" destination="r9S-cZ-w9I" id="9e2-Af-mOQ"/>
+                    </connections>
+                </controller>
+            </objects>
+            <point key="canvasLocation" x="522" y="340"/>
+        </scene>
         <!--Notification Controller-->
         <scene sceneID="ZPc-GJ-vnh">
             <objects>
-                <controller id="4sK-HA-Art" customClass="NotificationController" customModuleProvider="target"/>
+                <controller id="4sK-HA-Art" customClass="NotificationController" customModule="Run_WatchKit_App" customModuleProvider="target"/>
             </objects>
-            <point key="canvasLocation" x="468" y="643"/>
+            <point key="canvasLocation" x="523" y="643"/>
         </scene>
     </scenes>
 </document>

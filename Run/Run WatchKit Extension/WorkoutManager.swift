@@ -11,6 +11,8 @@ import HealthKit
 
 class WorkoutManager: NSObject, HKWorkoutSessionDelegate {
     
+    let configuration: WorkoutConfiguration
+    
     let healthStore = HKHealthStore()
     
     let workoutConfiguration: HKWorkoutConfiguration = {
@@ -33,6 +35,22 @@ class WorkoutManager: NSObject, HKWorkoutSessionDelegate {
     
     let heartRateQuantityType = HKQuantityType.quantityType(forIdentifier: .heartRate)!
     
+    var workoutDurationMinutes: Int { return configuration.workoutDurationMinutes }
+    var workoutDurationSeconds: Double { return configuration.workoutDurationSeconds }
+
+    var heartRateUpdated: ((_ bpm:Int) -> Void)?
+
+    var workoutPaused: Bool {
+        return workoutSession?.state != nil && workoutSession!.state == .paused
+    }
+
+    var workoutInProgress: Bool {
+        return workoutSession?.state != nil && (workoutSession!.state == .running || workoutSession!.state == .paused)
+    }
+    
+    init(_ configuration: WorkoutConfiguration) {
+        self.configuration = configuration
+    }
     
     
     // MARK: - HealthStore Availability & Authorization
@@ -80,6 +98,7 @@ class WorkoutManager: NSObject, HKWorkoutSessionDelegate {
     // MARK: - Monitor Heart Rate
     
     func startMonitoringHeartRate(_ date : Date) {
+        
         guard heartRateQuery == nil else { return }
 
         heartRateQuery = HKAnchoredObjectQuery(type: heartRateQuantityType, predicate: nil, anchor: heartRateQueryAnchor, limit: HKObjectQueryNoLimit, resultsHandler: updateHeartRate)
@@ -89,6 +108,7 @@ class WorkoutManager: NSObject, HKWorkoutSessionDelegate {
     }
 
     func stopMonitoringHeartRate(_ date : Date) {
+        
         if let query = heartRateQuery {
             healthStore.stop(query)
         }
@@ -104,10 +124,12 @@ class WorkoutManager: NSObject, HKWorkoutSessionDelegate {
         
         let value = sample.quantity.doubleValue(for: self.heartRateUnit)
         
+        heartRateUpdated?(Int(value))
+        
         print("[WorkoutManager] Heart Rate: \(value) (\(sample.sourceRevision.source.name)")
     }
     
-    
+
     // MARK: - HKWorkoutSessionDelegate
     
     func workoutSession(_ workoutSession: HKWorkoutSession, didChangeTo toState: HKWorkoutSessionState, from fromState: HKWorkoutSessionState, date: Date) {
