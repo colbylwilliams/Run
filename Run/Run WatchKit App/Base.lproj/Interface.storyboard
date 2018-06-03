@@ -19,7 +19,7 @@
                                 <tableRow identifier="NavigationRow" id="EKy-jj-sfU" customClass="NavigationRowController" customModule="Run_WatchKit_App" customModuleProvider="target">
                                     <group key="rootItem" width="1" height="60" alignment="left" id="BES-oL-OTi">
                                         <items>
-                                            <label alignment="left" verticalAlignment="center" text="Workout" id="hsX-h9-QpP">
+                                            <label alignment="left" verticalAlignment="center" text="Timed Workout" id="hsX-h9-QpP">
                                                 <fontDescription key="font" type="system" weight="medium" pointSize="18"/>
                                             </label>
                                         </items>
@@ -108,24 +108,26 @@
             <objects>
                 <controller identifier="ActiveWorkoutController" id="eSe-vL-J60" customClass="ActiveWorkoutController" customModule="Run_WatchKit_App" customModuleProvider="target">
                     <items>
-                        <group width="1" alignment="left" id="ETf-2u-7Un">
+                        <group width="1" alignment="left" spacing="4" id="ETf-2u-7Un">
                             <items>
-                                <label alignment="left" verticalAlignment="center" text="146" id="cY9-Mg-Qga">
+                                <label alignment="left" verticalAlignment="bottom" text="146" id="cY9-Mg-Qga">
                                     <fontDescription key="font" type="system" weight="medium" pointSize="34"/>
                                 </label>
-                                <label alignment="left" verticalAlignment="center" text="BPM" id="8L4-Od-OXP"/>
+                                <label height="27" alignment="left" verticalAlignment="bottom" text="BPM" id="8L4-Od-OXP">
+                                    <fontDescription key="font" type="system" weight="semibold" pointSize="14"/>
+                                </label>
                             </items>
                         </group>
                         <button alignment="center" verticalAlignment="center" id="gjU-zM-gxU">
                             <group key="contentGroup" width="1" alignment="left" layout="overlap" id="py7-BV-X98">
                                 <items>
-                                    <timer width="1" alignment="left" verticalAlignment="center" hidden="YES" minimumScaleFactor="0.90000000000000002" previewedSeconds="0" id="Cnc-fM-0Zh">
-                                        <fontDescription key="font" type="system" weight="medium" pointSize="40"/>
+                                    <timer width="1" alignment="center" verticalAlignment="center" hidden="YES" textAlignment="center" minimumScaleFactor="0.69999999999999996" previewedSeconds="0" id="Cnc-fM-0Zh">
+                                        <fontDescription key="font" type="system" weight="medium" pointSize="45"/>
                                     </timer>
-                                    <timer width="1" alignment="left" verticalAlignment="center" hidden="YES" minimumScaleFactor="0.90000000000000002" previewedSeconds="0" id="97E-49-UZI">
-                                        <fontDescription key="font" type="system" weight="medium" pointSize="40"/>
+                                    <timer width="1" alignment="center" verticalAlignment="center" textAlignment="center" minimumScaleFactor="0.69999999999999996" previewedSeconds="0" id="97E-49-UZI">
+                                        <fontDescription key="font" type="system" weight="medium" pointSize="45"/>
                                     </timer>
-                                    <label alignment="left" text="0:00:00" id="nty-ah-Zv4">
+                                    <label alignment="left" hidden="YES" text="0:00:00" id="nty-ah-Zv4">
                                         <fontDescription key="font" type="system" weight="medium" pointSize="40"/>
                                     </label>
                                 </items>

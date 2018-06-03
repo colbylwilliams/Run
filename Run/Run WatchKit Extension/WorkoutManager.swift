@@ -11,9 +11,33 @@ import HealthKit
 
 class WorkoutManager: NSObject, HKWorkoutSessionDelegate {
     
-    let configuration: WorkoutConfiguration
+    
+    // MARK: - Workout Duration
+    
+    fileprivate(set) var workoutDurationMinutes: Int = 0
+    
+    fileprivate(set) var workoutRunningSeconds: Double = 0
+    
+    
+    var workoutDurationSeconds: Double { return Double (workoutDurationMinutes * 60) }
+    
+    func setWorkoutDuration(hours: Int, minutes: Int) { workoutDurationMinutes = (hours * 60) + minutes }
+    
+    var workoutTime: (hours:Int, minutes:Int) { return (workoutDurationMinutes / 60, workoutDurationMinutes % 60) }
+    
+    var workoutTimer: Timer?
+    
+    
+    // MARK: - Heart Rate
+    
+    var targetHeartRate: Double?
+
+    
+    // MARK: - HealthKit
     
     let healthStore = HKHealthStore()
+    
+    var workoutSession : HKWorkoutSession?
     
     let workoutConfiguration: HKWorkoutConfiguration = {
        
@@ -25,48 +49,52 @@ class WorkoutManager: NSObject, HKWorkoutSessionDelegate {
         return config
     }()
     
-    var workoutSession : HKWorkoutSession?
-    
-    var heartRateQuery: HKAnchoredObjectQuery?
     
     var heartRateQueryAnchor: HKQueryAnchor?
+    
+    var heartRateQuery: HKAnchoredObjectQuery?
 
     let heartRateUnit = HKUnit(from: "count/min")
     
     let heartRateQuantityType = HKQuantityType.quantityType(forIdentifier: .heartRate)!
     
-    var workoutDurationMinutes: Int { return configuration.workoutDurationMinutes }
-    var workoutDurationSeconds: Double { return configuration.workoutDurationSeconds }
 
     var heartRateUpdated: ((_ bpm:Int) -> Void)?
-
-    var workoutPaused: Bool {
-        return workoutSession?.state != nil && workoutSession!.state == .paused
-    }
-
-    var workoutInProgress: Bool {
-        return workoutSession?.state != nil && (workoutSession!.state == .running || workoutSession!.state == .paused)
-    }
     
-    init(_ configuration: WorkoutConfiguration) {
-        self.configuration = configuration
-    }
+    var workoutStateChanged: ((_ to: HKWorkoutSessionState, _ from: HKWorkoutSessionState, _ date: Date) -> Void)?
+    
+
+    var workoutState: HKWorkoutSessionState { return workoutSession?.state ?? .notStarted }
+    
+    var workoutPaused: Bool { return workoutState == .paused }
+
+    var workoutInProgress: Bool { return workoutState == .running || workoutState == .paused }
+    
+    static let shared: WorkoutManager = WorkoutManager()
+    
+    
+    var timerEndDate: Date?
+    var timerStartDate: Date?
+    
+    var timerDatesUpdated: ((_ increasing:Date?, _ decreasing:Date?) -> Void)?
+
+    
+    fileprivate override init() { }
     
     
     // MARK: - HealthStore Availability & Authorization
     
-    func checkHealthStoreAvailability(handler: @escaping (Bool, Error?) -> ()) {
+    func checkHealthStoreAvailabilityAndAuthorization(completion: @escaping (Bool, Error?) -> Void) {
 
         guard HKHealthStore.isHealthDataAvailable() else {
-            handler(false, nil)
+            print("[WorkoutManager] Error: Health Data Unavailable")
+            completion(false, nil)
             return
         }
         
         let dataTypes = Set(arrayLiteral: heartRateQuantityType)
         
-        healthStore.requestAuthorization(toShare: nil, read: dataTypes) { success, error in
-            handler(success, error)
-        }
+        return healthStore.requestAuthorization(toShare: nil, read: dataTypes, completion: completion)
     }
     
     
@@ -75,9 +103,7 @@ class WorkoutManager: NSObject, HKWorkoutSessionDelegate {
     func startWorkout() throws {
     
         // workout already started
-        if workoutSession != nil {
-            return
-        }
+        guard workoutSession == nil else { return }
         
         workoutSession = try HKWorkoutSession(configuration: workoutConfiguration)
         
@@ -87,9 +113,23 @@ class WorkoutManager: NSObject, HKWorkoutSessionDelegate {
             healthStore.start(session)
         }
     }
+
+    func pauseWorkout() {
+        if let session = workoutSession, session.state == .running {
+            healthStore.pause(session)
+        }
+    }
+    
+    func resumeWorkout() {
+        if let session = workoutSession, session.state == .paused {
+            healthStore.resumeWorkoutSession(session)
+        }
+    }
     
     func endWorkout() {
-        if let session = workoutSession {
+        // TODO: may need to check for a paused workout, resume it, then end it...?
+        // If the session is not running, the system returns an invalidArgumentException exception
+        if let session = workoutSession, session.state == .running {
             healthStore.end(session)
         }
     }
@@ -112,32 +152,79 @@ class WorkoutManager: NSObject, HKWorkoutSessionDelegate {
         if let query = heartRateQuery {
             healthStore.stop(query)
         }
-        
-        workoutSession = nil
     }
     
     func updateHeartRate (_ query: HKAnchoredObjectQuery, _ samples: [HKSample]?, _ deleted: [HKDeletedObject]?, _ anchor: HKQueryAnchor?, _ error: Error?) {
         
         heartRateQueryAnchor = anchor
         
-        guard let sample = (samples as? [HKQuantitySample])?.first else { return }
+        guard let sample = (samples as? [HKQuantitySample])?.first else {
+            print("[WorkoutManager] Heart Rate: No Data or Unauthorized")
+            return
+        }
         
         let value = sample.quantity.doubleValue(for: self.heartRateUnit)
         
         heartRateUpdated?(Int(value))
         
-        print("[WorkoutManager] Heart Rate: \(value) (\(sample.sourceRevision.source.name)")
+        //print("[WorkoutManager] Heart Rate: \(value) (\(sample.sourceRevision.source.name))")
+    }
+
+    func updateTimer() {
+        
+        print("[WorkoutManager] Workout Running Seconds: \(workoutRunningSeconds)")
+        
+        invalidateWorkoutTimer()
+        
+        timerStartDate = Date(timeIntervalSinceNow: -(workoutRunningSeconds + 1))
+        timerEndDate = Date(timeInterval: workoutDurationSeconds + 1, since: timerStartDate!)
+        
+        DispatchQueue.main.async {
+            self.workoutTimer = Timer.scheduledTimer(withTimeInterval: self.workoutDurationSeconds - self.workoutRunningSeconds, repeats: false) { timer in
+                print("done!")
+                self.endWorkout()
+            }
+        }
+        
+        timerDatesUpdated?(timerStartDate, timerEndDate)
     }
     
-
+    func invalidateWorkoutTimer() {
+        if workoutTimer?.isValid ?? false {
+            workoutTimer!.invalidate()
+            workoutTimer = nil
+        }
+    }
+    
+    
     // MARK: - HKWorkoutSessionDelegate
     
     func workoutSession(_ workoutSession: HKWorkoutSession, didChangeTo toState: HKWorkoutSessionState, from fromState: HKWorkoutSessionState, date: Date) {
+        
+        print("[WorkoutManager] Workout Session changed state to \(toState.name) from \(fromState.name) at \(date)")
+        
         switch toState {
-        case .running:  startMonitoringHeartRate(date)
-        case .ended:    stopMonitoringHeartRate(date)
-        default:        print("[WorkoutManager] Unexpected state \(toState)")
+        case .running:
+            updateTimer()
+            startMonitoringHeartRate(date)
+        
+        case .ended:
+            timerDatesUpdated?(nil, nil)
+            stopMonitoringHeartRate(date)
+        
+        case .paused:
+            if let start = workoutSession.startDate {
+                workoutRunningSeconds += date.timeIntervalSince(start)
+                print("[WorkoutManager] Workout Running Seconds: \(workoutRunningSeconds)")
+            }
+            
+            invalidateWorkoutTimer()
+            timerDatesUpdated?(nil, nil)
+
+        default: print("[WorkoutManager] Unexpected state \(toState.name)")
         }
+        
+        workoutStateChanged?(toState, fromState, date)
     }
     
     func workoutSession(_ workoutSession: HKWorkoutSession, didFailWithError error: Error) {
@@ -146,6 +233,34 @@ class WorkoutManager: NSObject, HKWorkoutSessionDelegate {
     }
     
     func workoutSession(_ workoutSession: HKWorkoutSession, didGenerate event: HKWorkoutEvent) {
-        print("[WorkoutManager] workoutSessionDidGenerateEvent \(event)")
+        let metadata = event.metadata?.compactMap { "\($0.key) : \($0.value)" }.joined(separator: ", ") ?? ""
+        print("[WorkoutManager] Session Event: Type: \(event.type.name)  DateInterval: \(event.dateInterval)  Metadata: [ \(metadata) ]")
+    }
+}
+
+
+fileprivate extension HKWorkoutSessionState {
+    var name: String {
+        switch self {
+        case .notStarted: return "NotStarted"
+        case .running: return "Running"
+        case .ended: return "Ended"
+        case .paused: return "Paused"
+        }
+    }
+}
+
+fileprivate extension HKWorkoutEventType {
+    var name: String {
+        switch self {
+        case .pause:        return "Pause"
+        case .resume: return "Resume"
+        case .motionPaused: return "MotionPaused"
+        case .motionResumed: return "MotionResumed"
+        case .pauseOrResumeRequest: return "PauseOrResumeRequest"
+        case .lap: return "Lap"
+        case .segment: return "Segment"
+        case .marker: return "Marker"
+        }
     }
 }

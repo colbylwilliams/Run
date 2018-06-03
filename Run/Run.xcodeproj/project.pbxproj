@@ -26,7 +26,6 @@
 		93B4F47620C08B6700D8ADAE /* ActiveWorkoutController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B4F47520C08B6700D8ADAE /* ActiveWorkoutController.swift */; };
 		93B4F47820C0927800D8ADAE /* NewWorkoutController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B4F47720C0927800D8ADAE /* NewWorkoutController.swift */; };
 		93B4F47A20C0B1C700D8ADAE /* NavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B4F47920C0B1C700D8ADAE /* NavigationController.swift */; };
-		93B4F47C20C0D2DC00D8ADAE /* WorkoutConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B4F47B20C0D2DC00D8ADAE /* WorkoutConfiguration.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -98,7 +97,6 @@
 		93B4F47520C08B6700D8ADAE /* ActiveWorkoutController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveWorkoutController.swift; sourceTree = "<group>"; };
 		93B4F47720C0927800D8ADAE /* NewWorkoutController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewWorkoutController.swift; sourceTree = "<group>"; };
 		93B4F47920C0B1C700D8ADAE /* NavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationController.swift; sourceTree = "<group>"; };
-		93B4F47B20C0D2DC00D8ADAE /* WorkoutConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutConfiguration.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -177,7 +175,6 @@
 				93B4F45720BF2B8A00D8ADAE /* NotificationController.swift */,
 				93B4F45920BF2B8A00D8ADAE /* ComplicationController.swift */,
 				93B4F47320BF36E500D8ADAE /* WorkoutManager.swift */,
-				93B4F47B20C0D2DC00D8ADAE /* WorkoutConfiguration.swift */,
 				93B4F45B20BF2B8B00D8ADAE /* Assets.xcassets */,
 				93B4F45D20BF2B8B00D8ADAE /* Info.plist */,
 				93B4F45E20BF2B8B00D8ADAE /* PushNotificationPayload.apns */,
@@ -359,7 +356,6 @@
 				93B4F45A20BF2B8A00D8ADAE /* ComplicationController.swift in Sources */,
 				93B4F47420BF36E500D8ADAE /* WorkoutManager.swift in Sources */,
 				93B4F45620BF2B8A00D8ADAE /* ExtensionDelegate.swift in Sources */,
-				93B4F47C20C0D2DC00D8ADAE /* WorkoutConfiguration.swift in Sources */,
 				93B4F47820C0927800D8ADAE /* NewWorkoutController.swift in Sources */,
 				93B4F47620C08B6700D8ADAE /* ActiveWorkoutController.swift in Sources */,
 			);

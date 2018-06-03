@@ -8,6 +8,7 @@
 
 import Foundation
 import WatchKit
+import HealthKit
 
 class ActiveWorkoutController: WKInterfaceController {
     
@@ -23,39 +24,30 @@ class ActiveWorkoutController: WKInterfaceController {
     
     var timer: Timer?
     
-    var timeIncreasing = true
-    
-//    weak var workoutConfiguration: WorkoutConfiguration?
-    
-    var workoutManager: WorkoutManager?
+    var timeIncreasing = false
     
     override func awake(withContext context: Any?) {
         super.awake(withContext: context)
         
-        if let config = context as? WorkoutConfiguration {
-            workoutManager = WorkoutManager(config)
-            let workoutTime = config.workoutTime
-            totalTimeLabel.setText(String(workoutTime.hours) + ":" + String(format: "%02d", workoutTime.minutes) + ":00")
-        }
+        let workoutTime = WorkoutManager.shared.workoutTime
+        totalTimeLabel.setText(String(workoutTime.hours) + ":" + String(format: "%02d", workoutTime.minutes) + ":00")
         
         updateHeartRate(0)
         updateWorkoutButton(.start)
         
-        workoutManager?.heartRateUpdated = updateHeartRate
+        WorkoutManager.shared.heartRateUpdated = updateHeartRate
+        WorkoutManager.shared.workoutStateChanged = workoutStateChanged
+        WorkoutManager.shared.timerDatesUpdated = updateTimers
+        
+        setupTimers()
     }
     
-    override func didAppear() {
-        super.didAppear()
-    }
     
     func startWorkout() {
-        workoutManager?.checkHealthStoreAvailability { available, error in
+        WorkoutManager.shared.checkHealthStoreAvailabilityAndAuthorization { available, error in
             if available {
                 do {
-                    try self.workoutManager!.startWorkout()
-                    DispatchQueue.main.async {
-                        self.startTimers()
-                    }
+                    try WorkoutManager.shared.startWorkout()
                 } catch {
                     print("[ActiveWorkoutController] Error: Unable to start workout: \(error)")
                 }
@@ -65,47 +57,53 @@ class ActiveWorkoutController: WKInterfaceController {
         }
     }
     
+    func pauseWorkout() {
+        
+    }
+    
     @IBAction func timerGroupButtonAction() {
         timeIncreasing = !timeIncreasing
         increasingTimer.setHidden(!timeIncreasing)
         decreasingTimer.setHidden(timeIncreasing)
     }
-
-    var workoutInProgress: Bool?
     
     @IBAction func workoutButtonAction() {
-        if let inProgress = workoutInProgress {
-            workoutInProgress = !inProgress
-            updateWorkoutButton(inProgress ? .pause : .resume)
-        } else {
-            workoutInProgress = true
-            updateWorkoutButton(.pause)
-            
-            if let _ = workoutManager {
-                startWorkout()
+
+        let workoutState = WorkoutManager.shared.workoutState
+
+        switch workoutState {
+        case .notStarted: startWorkout()
+        case .running:    WorkoutManager.shared.pauseWorkout()
+        case .paused:     WorkoutManager.shared.resumeWorkout()
+        case .ended:      print("[ActiveWorkoutController] Error: Save Workout Not Implemented")
+        }
+    }
+    
+
+    func updateTimers (_ increasing:Date?, _ decreasing:Date?) {
+        DispatchQueue.main.async {
+            if let i = increasing, let d = decreasing {
+                self.increasingTimer.setDate(i)
+                self.decreasingTimer.setDate(d)
+                
+                self.increasingTimer.start()
+                self.decreasingTimer.start()
+            } else {
+                self.increasingTimer.stop()
+                self.decreasingTimer.stop()
             }
         }
     }
 
-    func startTimers() {
+    func setupTimers() {
         
         let now = Date()
-        let end = Date(timeInterval: workoutManager!.workoutDurationSeconds + 1, since: now)
-        
-        timer = Timer.scheduledTimer(withTimeInterval: end.timeIntervalSince(now), repeats: false) { timer in
-            print("done!")
-        }
+        let end = Date(timeInterval: WorkoutManager.shared.workoutDurationSeconds + 1, since: now)
         
         increasingTimer.setDate(now)
         decreasingTimer.setDate(end)
-        
-        totalTimeLabel.setHidden(true)
-        
-        timerGroupButtonAction()
-        
-        increasingTimer.start()
-        decreasingTimer.start()
     }
+    
     
     func updateWorkoutButton(_ state:WorkoutButtonState) {
         workoutButton.setBackgroundColor(state.backgroundColor)
@@ -119,32 +117,63 @@ class ActiveWorkoutController: WKInterfaceController {
             self.heartRateUnitLabel.setText(bpm > 0 ? "BPM" : nil)
         }
     }
+    
+    func workoutStateChanged (_ to: HKWorkoutSessionState, _ from: HKWorkoutSessionState, _ date: Date) {
+        
+        
+        
+        DispatchQueue.main.async {
+            self.updateWorkoutButton(WorkoutButtonState(forState: to))
+            //self.startTimers()
+        }
+
+        let start = WorkoutManager.shared.workoutSession?.startDate != nil ? "\(WorkoutManager.shared.workoutSession!.startDate!)" : ""
+        
+        switch to {
+        case .notStarted:   print("[ActiveWorkoutController] State Changed: Not Started \(start) \(date)")
+        case .running:      print("[ActiveWorkoutController] State Changed: Running \(start) \(date)")
+        case .paused:       print("[ActiveWorkoutController] State Changed: Paused \(start) \(date)")
+        case .ended:        print("[ActiveWorkoutController] State Changed: Ended (Save Workout) \(start) \(date)")
+        }
+    }
 }
 
 enum WorkoutButtonState {
     case start
     case pause
     case resume
+    case save
+    
+    init(forState state: HKWorkoutSessionState) {
+        switch state {
+        case .notStarted:   self = .start
+        case .running:      self = .pause
+        case .paused:       self = .resume
+        case .ended:        self = .save
+        }
+    }
     
     var title:String {
         switch self {
         case .start:  return "Start Workout"
         case .pause:  return "Pause Workout"
         case .resume: return "Resume Workout"
+        case .save:   return "Save Workout"
         }
     }
     
     var textColor: UIColor {
         switch self {
-        case .start, .resume:  return #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
-        case .pause:  return #colorLiteral(red: 1, green: 0.231372549, blue: 0.1882352941, alpha: 1)
+        case .start, .resume, .save:  return #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
+        case .pause: return #colorLiteral(red: 1, green: 0.231372549, blue: 0.1882352941, alpha: 1)
         }
     }
     
     var backgroundColor: UIColor {
         switch self {
         case .start, .resume:  return #colorLiteral(red: 0.01568627451, green: 0.8705882353, blue: 0.4431372549, alpha: 1)
-        case .pause:  return #colorLiteral(red: 1, green: 0.231372549, blue: 0.1882352941, alpha: 0.17)
+        case .pause: return #colorLiteral(red: 1, green: 0.231372549, blue: 0.1882352941, alpha: 0.17)
+        case .save:  return #colorLiteral(red: 0, green: 0.9607843137, blue: 0.9176470588, alpha: 1)
         }
     }
     

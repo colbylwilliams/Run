@@ -15,7 +15,7 @@ enum NavigationItem {
     
     var title: String {
         switch self {
-        case .workout: return "Workout"
+        case .workout: return "Timed Workout"
         case .stretch: return "Stretch"
         }
     }
@@ -27,8 +27,6 @@ class NavigationController: WKInterfaceController {
     
     var selectedNavItem: NavigationItem?
 
-    var workoutConfiguration: WorkoutConfiguration?
-    
     @IBOutlet weak var table: WKInterfaceTable!
     
     override func awake(withContext context: Any?) {
@@ -44,8 +42,8 @@ class NavigationController: WKInterfaceController {
             
             switch selected {
             case .workout:
-                if workoutConfiguration?.workoutDurationMinutes ?? 0 > 0 {
-                    pushController(withName: "ActiveWorkoutController", context: workoutConfiguration)
+                if WorkoutManager.shared.workoutDurationMinutes > 0 {
+                    pushController(withName: "ActiveWorkoutController", context: nil)
                 }
             case .stretch: print("[NavigationController] Stretch Not Implemented")
             }
@@ -62,8 +60,7 @@ class NavigationController: WKInterfaceController {
         
         switch navItem {
         case .workout:
-            workoutConfiguration = WorkoutConfiguration()
-            presentController(withName: "NewWorkoutController", context: workoutConfiguration)
+            presentController(withName: "NewWorkoutController", context: nil)
         case .stretch: print("[NavigationController] Stretch Not Implemented")
         }
     }

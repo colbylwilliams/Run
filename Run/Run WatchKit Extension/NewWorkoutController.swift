@@ -19,12 +19,8 @@ class NewWorkoutController: WKInterfaceController {
     @IBOutlet weak var hourPicker: WKInterfacePicker!
     @IBOutlet weak var minutePicker: WKInterfacePicker!
     
-    weak var workoutConfiguration: WorkoutConfiguration?
-    
     override func awake(withContext context: Any?) {
         super.awake(withContext: context)
-        
-        workoutConfiguration = context as? WorkoutConfiguration
         
         hourPicker.setItems((0...3).map { $0.pickerItem("hours") })
         minutePicker.setItems((0...59).map { $0.pickerItem("minutes") })
@@ -34,8 +30,8 @@ class NewWorkoutController: WKInterfaceController {
         
         minutePicker.focus()
         
-        if let config = workoutConfiguration {
-            let t = config.workoutTime
+        if WorkoutManager.shared.workoutDurationMinutes > 0 {
+            let t = WorkoutManager.shared.workoutTime
             hourPicker.setSelectedItemIndex(t.hours)
             minutePicker.setSelectedItemIndex(t.minutes)
         }
@@ -64,9 +60,7 @@ class NewWorkoutController: WKInterfaceController {
     }
     
     @IBAction func saveButtonAction() {
-        if let config = workoutConfiguration {
-            config.setWorkoutDuration(hours: workoutHours, minutes: workoutMinutes)
-        }
+        WorkoutManager.shared.setWorkoutDuration(hours: workoutHours, minutes: workoutMinutes)
         dismiss()
     }
 }
