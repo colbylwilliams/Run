@@ -10,30 +10,50 @@ import Foundation
 import WatchKit
 
 enum NavigationItem {
-    case workout
+    case timed
+    case intervals
     case stretch
     
     var title: String {
         switch self {
-        case .workout: return "Timed Workout"
+        case .timed: return "Timed"
+        case .intervals: return "Intervals"
         case .stretch: return "Stretch"
+        }
+    }
+    
+    var image: String {
+        switch self {
+        case .timed: return "bar_teal"
+        case .intervals: return "bar_blue"
+        case .stretch: return "bar_purple"
+        }
+    }
+    
+    var controller: String {
+        switch self {
+        case .timed: return "NewTimedController"
+        case .intervals: return "NewIntervalsController"
+        case .stretch: return "NewStretchController"
         }
     }
 }
 
 class NavigationController: WKInterfaceController {
 
-    let navItems: [NavigationItem] = [.workout, .stretch]
+    let navItems: [NavigationItem] = [.timed, .intervals, .stretch]
     
     var selectedNavItem: NavigationItem?
 
     @IBOutlet weak var table: WKInterfaceTable!
     
+    
     override func awake(withContext context: Any?) {
         super.awake(withContext: context)
         
-        loadTable()
+        checkHealthKit()
     }
+    
     
     override func willActivate() {
         super.willActivate()
@@ -41,16 +61,17 @@ class NavigationController: WKInterfaceController {
         if let selected = selectedNavItem {
             
             switch selected {
-            case .workout:
-                if WorkoutManager.shared.workoutDurationMinutes > 0 {
+            case .timed:
+                if WorkoutManager.shared.workout is TimedWorkout {
                     pushController(withName: "ActiveWorkoutController", context: nil)
                 }
-            case .stretch: print("[NavigationController] Stretch Not Implemented")
+            case .intervals, .stretch: print("[NavigationController] Stretch & Intervals Not Implemented")
             }
             
             selectedNavItem = nil
         }
     }
+    
     
     override func table(_ table: WKInterfaceTable, didSelectRowAt rowIndex: Int) {
         
@@ -58,12 +79,15 @@ class NavigationController: WKInterfaceController {
         
         selectedNavItem = navItem
         
-        switch navItem {
-        case .workout:
-            presentController(withName: "NewWorkoutController", context: nil)
-        case .stretch: print("[NavigationController] Stretch Not Implemented")
-        }
+        presentController(withName: navItem.controller, context: nil)
+        
+//        switch navItem {
+//        case .timed: presentController(withName: navItem.controller, context: nil)
+//        case .intervals: presentController(withName: navItem.controller, context: nil)
+//        case .stretch: print("[NavigationController] Stretch Not Implemented")
+//        }
     }
+    
     
     func loadTable() {
         
@@ -76,13 +100,29 @@ class NavigationController: WKInterfaceController {
             row?.setContent(navItems[i])
         }
     }
+    
+    
+    func checkHealthKit() {
+        WorkoutManager.shared.checkHealthStoreAvailabilityAndAuthorization { available, error in
+            if available {
+                DispatchQueue.main.async {
+                    self.loadTable()
+                }
+            } else if let error = error {
+                print("[ActiveWorkoutController] Error: health information unavailable: \(error)")
+            }
+        }
+    }
 }
+
 
 class NavigationRowController: NSObject {
     
     @IBOutlet weak var titleLabel: WKInterfaceLabel!
+    @IBOutlet weak var barImage: WKInterfaceImage!
     
     func setContent(_ item: NavigationItem) {
         titleLabel.setText(item.title)
+        barImage.setImageNamed(item.image)
     }
 }

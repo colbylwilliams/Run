@@ -22,15 +22,11 @@ class ActiveWorkoutController: WKInterfaceController {
     
     @IBOutlet weak var workoutButton: WKInterfaceButton!
     
-    var timer: Timer?
     
     var timeIncreasing = false
     
     override func awake(withContext context: Any?) {
         super.awake(withContext: context)
-        
-        let workoutTime = WorkoutManager.shared.workoutTime
-        totalTimeLabel.setText(String(workoutTime.hours) + ":" + String(format: "%02d", workoutTime.minutes) + ":00")
         
         updateHeartRate(0)
         updateWorkoutButton(.start)
@@ -44,21 +40,11 @@ class ActiveWorkoutController: WKInterfaceController {
     
     
     func startWorkout() {
-        WorkoutManager.shared.checkHealthStoreAvailabilityAndAuthorization { available, error in
-            if available {
-                do {
-                    try WorkoutManager.shared.startWorkout()
-                } catch {
-                    print("[ActiveWorkoutController] Error: Unable to start workout: \(error)")
-                }
-            } else if let error = error {
-                print("[ActiveWorkoutController] Error: health information unavailable: \(error)")
-            }
+        do {
+            try WorkoutManager.shared.startWorkout()
+        } catch {
+            print("[ActiveWorkoutController] Error: Unable to start workout: \(error)")
         }
-    }
-    
-    func pauseWorkout() {
-        
     }
     
     @IBAction func timerGroupButtonAction() {
@@ -97,11 +83,14 @@ class ActiveWorkoutController: WKInterfaceController {
 
     func setupTimers() {
         
-        let now = Date()
-        let end = Date(timeInterval: WorkoutManager.shared.workoutDurationSeconds + 1, since: now)
-        
-        increasingTimer.setDate(now)
-        decreasingTimer.setDate(end)
+        if let workout = WorkoutManager.shared.workout {
+            
+            let now = Date()
+            let end = Date(timeInterval: workout.duration + 1, since: now)
+            
+            increasingTimer.setDate(now)
+            decreasingTimer.setDate(end)
+        }
     }
     
     
@@ -120,21 +109,19 @@ class ActiveWorkoutController: WKInterfaceController {
     
     func workoutStateChanged (_ to: HKWorkoutSessionState, _ from: HKWorkoutSessionState, _ date: Date) {
         
-        
-        
         DispatchQueue.main.async {
             self.updateWorkoutButton(WorkoutButtonState(forState: to))
             //self.startTimers()
         }
 
-        let start = WorkoutManager.shared.workoutSession?.startDate != nil ? "\(WorkoutManager.shared.workoutSession!.startDate!)" : ""
-        
-        switch to {
-        case .notStarted:   print("[ActiveWorkoutController] State Changed: Not Started \(start) \(date)")
-        case .running:      print("[ActiveWorkoutController] State Changed: Running \(start) \(date)")
-        case .paused:       print("[ActiveWorkoutController] State Changed: Paused \(start) \(date)")
-        case .ended:        print("[ActiveWorkoutController] State Changed: Ended (Save Workout) \(start) \(date)")
-        }
+//        let start = WorkoutManager.shared.startDate != nil ? "\(WorkoutManager.shared.startDate!)" : ""
+//
+//        switch to {
+//        case .notStarted:   print("[ActiveWorkoutController] State Changed: Not Started \(start) \(date)")
+//        case .running:      print("[ActiveWorkoutController] State Changed: Running \(start) \(date)")
+//        case .paused:       print("[ActiveWorkoutController] State Changed: Paused \(start) \(date)")
+//        case .ended:        print("[ActiveWorkoutController] State Changed: Ended (Save Workout) \(start) \(date)")
+//        }
     }
 }
 

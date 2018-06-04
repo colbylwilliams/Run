@@ -11,35 +11,18 @@ import HealthKit
 
 class WorkoutManager: NSObject, HKWorkoutSessionDelegate {
     
+    static let shared: WorkoutManager = WorkoutManager()
     
-    // MARK: - Workout Duration
+    fileprivate override init() { }
     
-    fileprivate(set) var workoutDurationMinutes: Int = 0
-    
-    fileprivate(set) var workoutRunningSeconds: Double = 0
-    
-    
-    var workoutDurationSeconds: Double { return Double (workoutDurationMinutes * 60) }
-    
-    func setWorkoutDuration(hours: Int, minutes: Int) { workoutDurationMinutes = (hours * 60) + minutes }
-    
-    var workoutTime: (hours:Int, minutes:Int) { return (workoutDurationMinutes / 60, workoutDurationMinutes % 60) }
-    
-    var workoutTimer: Timer?
-    
-    
-    // MARK: - Heart Rate
-    
-    var targetHeartRate: Double?
-
     
     // MARK: - HealthKit
     
-    let healthStore = HKHealthStore()
+    fileprivate let healthStore = HKHealthStore()
     
-    var workoutSession : HKWorkoutSession?
+    fileprivate var workoutSession : HKWorkoutSession?
     
-    let workoutConfiguration: HKWorkoutConfiguration = {
+    fileprivate let workoutConfiguration: HKWorkoutConfiguration = {
        
         let config = HKWorkoutConfiguration()
         
@@ -49,37 +32,29 @@ class WorkoutManager: NSObject, HKWorkoutSessionDelegate {
         return config
     }()
     
+    fileprivate var heartRateQueryAnchor: HKQueryAnchor?
     
-    var heartRateQueryAnchor: HKQueryAnchor?
-    
-    var heartRateQuery: HKAnchoredObjectQuery?
+    fileprivate var heartRateQuery: HKAnchoredObjectQuery?
 
-    let heartRateUnit = HKUnit(from: "count/min")
-    
-    let heartRateQuantityType = HKQuantityType.quantityType(forIdentifier: .heartRate)!
-    
 
-    var heartRateUpdated: ((_ bpm:Int) -> Void)?
     
-    var workoutStateChanged: ((_ to: HKWorkoutSessionState, _ from: HKWorkoutSessionState, _ date: Date) -> Void)?
-    
+    fileprivate var workoutTimer: Timer?
 
+
+    var workout: Workout?
+    
     var workoutState: HKWorkoutSessionState { return workoutSession?.state ?? .notStarted }
     
-    var workoutPaused: Bool { return workoutState == .paused }
 
-    var workoutInProgress: Bool { return workoutState == .running || workoutState == .paused }
+
+    // MARK: - Actions & Events
     
-    static let shared: WorkoutManager = WorkoutManager()
-    
-    
-    var timerEndDate: Date?
-    var timerStartDate: Date?
+    var heartRateUpdated: ((_ bpm:Int) -> Void)?
     
     var timerDatesUpdated: ((_ increasing:Date?, _ decreasing:Date?) -> Void)?
-
     
-    fileprivate override init() { }
+    var workoutStateChanged: ((_ to: HKWorkoutSessionState, _ from: HKWorkoutSessionState, _ date: Date) -> Void)?
+
     
     
     // MARK: - HealthStore Availability & Authorization
@@ -92,7 +67,7 @@ class WorkoutManager: NSObject, HKWorkoutSessionDelegate {
             return
         }
         
-        let dataTypes = Set(arrayLiteral: heartRateQuantityType)
+        let dataTypes = Set(arrayLiteral: WorkoutUnits.heartRateQuantityType)
         
         return healthStore.requestAuthorization(toShare: nil, read: dataTypes, completion: completion)
     }
@@ -102,6 +77,10 @@ class WorkoutManager: NSObject, HKWorkoutSessionDelegate {
     
     func startWorkout() throws {
     
+        guard workout != nil else { throw WorkoutManagerError.workoutNil }
+        guard workout!.duration > 0 else { throw WorkoutManagerError.workoutDuration }
+        
+        
         // workout already started
         guard workoutSession == nil else { return }
         
@@ -127,9 +106,7 @@ class WorkoutManager: NSObject, HKWorkoutSessionDelegate {
     }
     
     func endWorkout() {
-        // TODO: may need to check for a paused workout, resume it, then end it...?
-        // If the session is not running, the system returns an invalidArgumentException exception
-        if let session = workoutSession, session.state == .running {
+        if let session = workoutSession, (session.state == .running || session.state == .paused) {
             healthStore.end(session)
         }
     }
@@ -137,24 +114,28 @@ class WorkoutManager: NSObject, HKWorkoutSessionDelegate {
     
     // MARK: - Monitor Heart Rate
     
-    func startMonitoringHeartRate(_ date : Date) {
+    fileprivate func startMonitoringHeartRate(_ date : Date) {
         
         guard heartRateQuery == nil else { return }
 
-        heartRateQuery = HKAnchoredObjectQuery(type: heartRateQuantityType, predicate: nil, anchor: heartRateQueryAnchor, limit: HKObjectQueryNoLimit, resultsHandler: updateHeartRate)
+        // TODO: consider constraining the query to session start date
+        
+        heartRateQuery = HKAnchoredObjectQuery(type: WorkoutUnits.heartRateQuantityType, predicate: nil, anchor: heartRateQueryAnchor, limit: HKObjectQueryNoLimit, resultsHandler: updateHeartRate)
         heartRateQuery!.updateHandler = updateHeartRate
         
         healthStore.execute(heartRateQuery!)
     }
 
-    func stopMonitoringHeartRate(_ date : Date) {
+    fileprivate func stopMonitoringHeartRate(_ date : Date) {
         
         if let query = heartRateQuery {
             healthStore.stop(query)
         }
+        
+        heartRateUpdated?(0)
     }
     
-    func updateHeartRate (_ query: HKAnchoredObjectQuery, _ samples: [HKSample]?, _ deleted: [HKDeletedObject]?, _ anchor: HKQueryAnchor?, _ error: Error?) {
+    fileprivate func updateHeartRate (_ query: HKAnchoredObjectQuery, _ samples: [HKSample]?, _ deleted: [HKDeletedObject]?, _ anchor: HKQueryAnchor?, _ error: Error?) {
         
         heartRateQueryAnchor = anchor
         
@@ -163,33 +144,35 @@ class WorkoutManager: NSObject, HKWorkoutSessionDelegate {
             return
         }
         
-        let value = sample.quantity.doubleValue(for: self.heartRateUnit)
+        let value = sample.quantity.doubleValue(for: WorkoutUnits.heartRateUnit)
         
         heartRateUpdated?(Int(value))
         
         //print("[WorkoutManager] Heart Rate: \(value) (\(sample.sourceRevision.source.name))")
     }
 
-    func updateTimer() {
+    fileprivate func updateTimer() {
         
-        print("[WorkoutManager] Workout Running Seconds: \(workoutRunningSeconds)")
+        //print("[WorkoutManager] Workout Running Seconds: \(workoutRunningSeconds)  \(workout.durationCompleted())")
         
         invalidateWorkoutTimer()
         
-        timerStartDate = Date(timeIntervalSinceNow: -(workoutRunningSeconds + 1))
-        timerEndDate = Date(timeInterval: workoutDurationSeconds + 1, since: timerStartDate!)
+        guard let durations = workout?.durations() else { return }
         
         DispatchQueue.main.async {
-            self.workoutTimer = Timer.scheduledTimer(withTimeInterval: self.workoutDurationSeconds - self.workoutRunningSeconds, repeats: false) { timer in
+            self.workoutTimer = Timer.scheduledTimer(withTimeInterval: durations.remaining, repeats: false) { timer in
                 print("done!")
                 self.endWorkout()
             }
         }
         
-        timerDatesUpdated?(timerStartDate, timerEndDate)
+        let startDate = Date(timeIntervalSinceNow: -(durations.completed + 1))
+        let endDate = Date(timeInterval: durations.total + 1, since: startDate)
+        
+        timerDatesUpdated?(startDate, endDate)
     }
     
-    func invalidateWorkoutTimer() {
+    fileprivate func invalidateWorkoutTimer() {
         if workoutTimer?.isValid ?? false {
             workoutTimer!.invalidate()
             workoutTimer = nil
@@ -201,21 +184,44 @@ class WorkoutManager: NSObject, HKWorkoutSessionDelegate {
     
     func workoutSession(_ workoutSession: HKWorkoutSession, didChangeTo toState: HKWorkoutSessionState, from fromState: HKWorkoutSessionState, date: Date) {
         
-        print("[WorkoutManager] Workout Session changed state to \(toState.name) from \(fromState.name) at \(date)")
+        print("[WorkoutManager] Workout Session changed state: from \(fromState.name) to \(toState.name) at \(date)")
+        
+        //print("[WorkoutManager] Start: \(workoutSession.startDate?.description ?? "nil")")
+        //print("[WorkoutManager] Date:  \(date.description)")
+        //print("[WorkoutManager] End:   \(workoutSession.endDate?.description ?? "nil")")
+        
         
         switch toState {
         case .running:
+                        
             updateTimer()
             startMonitoringHeartRate(date)
         
         case .ended:
+            
+            if let start = workoutSession.startDate {
+                workout?.addRunningDates(start: start, end: date)
+            }
+            
             timerDatesUpdated?(nil, nil)
             stopMonitoringHeartRate(date)
         
+            //guard let durations = workout?.durations() else {
+                //print("nope")
+                //return
+            //}
+            
+            //print("[WorkoutManager] Workout StartDate: \(workout!.startDate!)")
+            //print("[WorkoutManager] Workout EndDate:   \(workout!.endDate!)")
+            //print("[WorkoutManager] Workout Duration:  \(durations.total)")
+            //print("[WorkoutManager] Workout Completed: \(durations.completed)")
+            //print("[WorkoutManager] Workout Remaining: \(durations.remaining)")
+            
         case .paused:
+            
             if let start = workoutSession.startDate {
-                workoutRunningSeconds += date.timeIntervalSince(start)
-                print("[WorkoutManager] Workout Running Seconds: \(workoutRunningSeconds)")
+                workout?.addRunningDates(start: start, end: date)
+                //print("[WorkoutManager] Workout Running Seconds: \(workout.durationCompleted())")
             }
             
             invalidateWorkoutTimer()
@@ -233,8 +239,8 @@ class WorkoutManager: NSObject, HKWorkoutSessionDelegate {
     }
     
     func workoutSession(_ workoutSession: HKWorkoutSession, didGenerate event: HKWorkoutEvent) {
-        let metadata = event.metadata?.compactMap { "\($0.key) : \($0.value)" }.joined(separator: ", ") ?? ""
-        print("[WorkoutManager] Session Event: Type: \(event.type.name)  DateInterval: \(event.dateInterval)  Metadata: [ \(metadata) ]")
+        //let metadata = event.metadata?.compactMap { "\($0.key) : \($0.value)" }.joined(separator: ", ") ?? ""
+        //print("[WorkoutManager] Session Event: Type: \(event.type.name)  DateInterval: \(event.dateInterval)  Metadata: [ \(metadata) ]")
     }
 }
 

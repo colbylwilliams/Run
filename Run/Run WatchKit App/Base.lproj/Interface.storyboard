@@ -1,30 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder.WatchKit.Storyboard" version="3.0" toolsVersion="14109" targetRuntime="watchKit" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="DvV-ZT-jDQ">
+<document type="com.apple.InterfaceBuilder.WatchKit.Storyboard" version="3.0" toolsVersion="14113" targetRuntime="watchKit" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="DvV-ZT-jDQ">
     <device id="watch42" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="watchOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBWatchKitPlugin" version="14031"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBWatchKitPlugin" version="14033"/>
     </dependencies>
     <scenes>
-        <!--NavigationController-->
+        <!--Run-->
         <scene sceneID="P02-rn-fQD">
             <objects>
-                <controller identifier="NavigationController" id="DvV-ZT-jDQ" customClass="NavigationController" customModule="Run_WatchKit_App" customModuleProvider="target">
+                <controller identifier="NavigationController" title="Run" id="DvV-ZT-jDQ" customClass="NavigationController" customModule="Run_WatchKit_App" customModuleProvider="target">
                     <items>
                         <table alignment="left" verticalAlignment="center" id="3RD-c6-bq1">
                             <items>
                                 <tableRow identifier="NavigationRow" id="EKy-jj-sfU" customClass="NavigationRowController" customModule="Run_WatchKit_App" customModuleProvider="target">
-                                    <group key="rootItem" width="1" height="60" alignment="left" id="BES-oL-OTi">
+                                    <group key="rootItem" width="1" height="50" alignment="left" spacing="9" id="BES-oL-OTi">
                                         <items>
-                                            <label alignment="left" verticalAlignment="center" text="Timed Workout" id="hsX-h9-QpP">
-                                                <fontDescription key="font" type="system" weight="medium" pointSize="18"/>
+                                            <imageView width="2" height="50" alignment="left" verticalAlignment="center" image="bar_teal" id="bOB-AO-8Lc"/>
+                                            <label alignment="left" verticalAlignment="center" text="Intervals" id="hsX-h9-QpP">
+                                                <fontDescription key="font" type="system" pointSize="18"/>
                                             </label>
                                         </items>
                                     </group>
                                     <connections>
+                                        <outlet property="barImage" destination="bOB-AO-8Lc" id="cuM-OX-gL3"/>
                                         <outlet property="titleLabel" destination="hsX-h9-QpP" id="Qoa-tX-SY3"/>
                                     </connections>
                                 </tableRow>
@@ -54,37 +56,74 @@
             </objects>
             <point key="canvasLocation" x="220" y="643"/>
         </scene>
-        <!--NewWorkoutController-->
+        <!--NewTimedController-->
         <scene sceneID="Mm5-iK-r2W">
             <objects>
-                <controller identifier="NewWorkoutController" id="pRW-E4-EQf" customClass="NewWorkoutController" customModule="Run_WatchKit_App" customModuleProvider="target">
+                <controller identifier="NewTimedController" id="pRW-E4-EQf" customClass="NewTimedController" customModule="Run_WatchKit_App" customModuleProvider="target">
                     <items>
-                        <group alignment="center" spacing="8" id="lvw-0i-6A2">
+                        <group width="1" alignment="center" id="lvw-0i-6A2">
                             <items>
-                                <picker width="60" height="50" alignment="left" focusStyle="stack" id="Wkv-pj-qzi">
+                                <picker width="46" height="50" alignment="left" focusStyle="stack" id="Wkv-pj-qzi">
                                     <connections>
                                         <action selector="hourPickerActionWithIndex:" destination="pRW-E4-EQf" id="ng0-D2-bxW"/>
                                     </connections>
                                 </picker>
-                                <picker width="60" height="50" alignment="left" focusStyle="stack" id="ATf-78-pOP">
+                                <picker width="46" height="50" alignment="center" focusStyle="stack" id="ATf-78-pOP">
                                     <connections>
                                         <action selector="minutePickerActionWithIndex:" destination="pRW-E4-EQf" id="gwz-cy-fwM"/>
+                                    </connections>
+                                </picker>
+                                <picker width="46" height="50" alignment="right" focusStyle="stack" id="Jhh-BG-5Kh">
+                                    <connections>
+                                        <action selector="secondsPickerActionWithIndex:" destination="pRW-E4-EQf" id="ytI-Uw-hPi"/>
                                     </connections>
                                 </picker>
                             </items>
                             <edgeInsets key="margins" left="0.0" right="0.0" top="12" bottom="0.0"/>
                         </group>
-                        <group alignment="center" spacing="8" id="G1x-VL-jLy">
+                        <group width="1" height="14" alignment="center" id="G1x-VL-jLy">
                             <items>
-                                <label width="60" alignment="left" text="hours" textAlignment="center" id="nI7-e9-7MP">
+                                <label width="46" alignment="left" text="hours" textAlignment="center" id="nI7-e9-7MP">
                                     <color key="textColor" red="0.94901960780000005" green="0.95686274510000002" blue="1" alpha="0.79773116438356162" colorSpace="custom" customColorSpace="sRGB"/>
+                                    <fontDescription key="font" type="system" pointSize="10"/>
+                                </label>
+                                <label width="46" alignment="center" text="minutes" textAlignment="center" id="a59-Zs-JeZ">
+                                    <color key="textColor" red="0.94901960780000005" green="0.95686274510000002" blue="1" alpha="0.79773116438356162" colorSpace="custom" customColorSpace="sRGB"/>
+                                    <fontDescription key="font" type="system" pointSize="10"/>
+                                </label>
+                                <label width="46" alignment="right" text="seconds" textAlignment="center" id="nZE-gh-NyD">
+                                    <color key="textColor" red="0.94901960780000005" green="0.95686274510000002" blue="1" alpha="0.79773116440000003" colorSpace="custom" customColorSpace="sRGB"/>
+                                    <fontDescription key="font" type="system" pointSize="10"/>
+                                </label>
+                            </items>
+                        </group>
+                        <group alignment="center" spacing="8" id="8Pg-MO-Kpp">
+                            <items>
+                                <picker width="60" height="50" alignment="left" focusStyle="stack" id="ONl-go-AhD">
+                                    <connections>
+                                        <action selector="pacePickerActionWithIndex:" destination="pRW-E4-EQf" id="CO1-No-tur"/>
+                                    </connections>
+                                </picker>
+                                <picker width="70" height="50" alignment="right" focusStyle="stack" id="fBV-gR-3ZE">
+                                    <connections>
+                                        <action selector="inclinePickerActionWithIndex:" destination="pRW-E4-EQf" id="qOy-IN-NeQ"/>
+                                    </connections>
+                                </picker>
+                            </items>
+                            <edgeInsets key="margins" left="0.0" right="0.0" top="12" bottom="0.0"/>
+                        </group>
+                        <group alignment="center" spacing="8" id="Q9W-xc-heP">
+                            <items>
+                                <label width="60" alignment="left" text="mph" textAlignment="center" id="DwQ-6P-Ga7">
+                                    <color key="textColor" red="0.94901960780000005" green="0.95686274510000002" blue="1" alpha="0.79773116440000003" colorSpace="custom" customColorSpace="sRGB"/>
                                     <fontDescription key="font" type="system" pointSize="11"/>
                                 </label>
-                                <label width="60" alignment="left" text="minutes" textAlignment="center" id="a59-Zs-JeZ">
-                                    <color key="textColor" red="0.94901960780000005" green="0.95686274510000002" blue="1" alpha="0.79773116438356162" colorSpace="custom" customColorSpace="sRGB"/>
+                                <label width="70" alignment="right" text="incline" textAlignment="center" id="SJh-hw-Ssn">
+                                    <color key="textColor" red="0.94901960780000005" green="0.95686274510000002" blue="1" alpha="0.79773116440000003" colorSpace="custom" customColorSpace="sRGB"/>
                                     <fontDescription key="font" type="system" pointSize="11"/>
                                 </label>
                             </items>
+                            <edgeInsets key="margins" left="0.0" right="0.0" top="0.0" bottom="12"/>
                         </group>
                         <button width="1" alignment="left" verticalAlignment="bottom" title="Save" id="2hK-SX-p0U">
                             <color key="titleColor" red="0.015686274510000001" green="0.87058823529999996" blue="0.4431372549" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -96,12 +135,128 @@
                     </items>
                     <connections>
                         <outlet property="hourPicker" destination="Wkv-pj-qzi" id="IZ4-qP-QOT"/>
+                        <outlet property="inclinePicker" destination="fBV-gR-3ZE" id="wTw-px-t9l"/>
                         <outlet property="minutePicker" destination="ATf-78-pOP" id="VtI-Z8-bvY"/>
+                        <outlet property="pacePicker" destination="ONl-go-AhD" id="3Uq-22-q4h"/>
                         <outlet property="saveButton" destination="2hK-SX-p0U" id="5sB-o9-ySh"/>
+                        <outlet property="secondsPicker" destination="Jhh-BG-5Kh" id="lj0-dt-Kig"/>
                     </connections>
                 </controller>
             </objects>
-            <point key="canvasLocation" x="220" y="47"/>
+            <point key="canvasLocation" x="219.69230769230771" y="11.333333333333334"/>
+        </scene>
+        <!--NewIntervalsController-->
+        <scene sceneID="Mag-Os-LZY">
+            <objects>
+                <controller identifier="NewIntervalsController" id="ec8-30-LlR" customClass="NewIntervalsController" customModule="Run_WatchKit_App" customModuleProvider="target">
+                    <items>
+                        <group width="1" height="4" alignment="left" id="5U9-ap-5M7"/>
+                        <label alignment="left" text="High Intensity Intervals" id="SEZ-mE-9Ue">
+                            <color key="textColor" red="0.98039215690000003" green="0.066666666669999999" blue="0.30980392159999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <fontDescription key="font" type="system" pointSize="11"/>
+                        </label>
+                        <group width="1" alignment="center" spacing="0.0" id="rPJ-bT-jpF">
+                            <items>
+                                <picker width="48" height="50" alignment="left" focusStyle="stack" id="cVH-NI-WXW">
+                                    <connections>
+                                        <action selector="intensityMinutesPickerActionWithIndex:" destination="ec8-30-LlR" id="OVZ-3V-ida"/>
+                                    </connections>
+                                </picker>
+                                <picker width="48" height="50" alignment="center" focusStyle="stack" id="7NL-TU-q2g">
+                                    <connections>
+                                        <action selector="intensityPacePickerActionWithIndex:" destination="ec8-30-LlR" id="KHU-es-A4R"/>
+                                    </connections>
+                                </picker>
+                                <picker width="60" height="50" alignment="right" focusStyle="stack" id="XRT-pK-KV2">
+                                    <connections>
+                                        <action selector="intensityInclinePickerActionWithIndex:" destination="ec8-30-LlR" id="A72-zz-WyJ"/>
+                                    </connections>
+                                </picker>
+                            </items>
+                        </group>
+                        <group width="1" alignment="center" spacing="0.0" id="Lgt-JU-lL5">
+                            <items>
+                                <label width="48" alignment="left" text="mins" textAlignment="center" id="KK4-VL-pEF">
+                                    <color key="textColor" red="0.94901960780000005" green="0.95686274510000002" blue="1" alpha="0.79773116440000003" colorSpace="custom" customColorSpace="sRGB"/>
+                                    <fontDescription key="font" type="system" pointSize="11"/>
+                                </label>
+                                <label width="48" alignment="center" text="mph" textAlignment="center" id="E9L-2X-NwH">
+                                    <color key="textColor" red="0.94901960780000005" green="0.95686274510000002" blue="1" alpha="0.79773116440000003" colorSpace="custom" customColorSpace="sRGB"/>
+                                    <fontDescription key="font" type="system" pointSize="11"/>
+                                </label>
+                                <label width="60" alignment="right" text="incline" textAlignment="center" id="T60-x6-Fyj">
+                                    <color key="textColor" red="0.94901960780000005" green="0.95686274510000002" blue="1" alpha="0.79773116440000003" colorSpace="custom" customColorSpace="sRGB"/>
+                                    <fontDescription key="font" type="system" pointSize="11"/>
+                                </label>
+                            </items>
+                            <edgeInsets key="margins" left="0.0" right="0.0" top="0.0" bottom="10"/>
+                        </group>
+                        <label alignment="left" text="Recovery Intervals" id="9CI-10-bxO">
+                            <color key="textColor" red="0.35294117650000001" green="0.7843137255" blue="0.98039215690000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <fontDescription key="font" type="system" pointSize="11"/>
+                        </label>
+                        <group width="1" alignment="center" spacing="0.0" id="M2N-dy-z6d">
+                            <items>
+                                <picker width="48" height="50" alignment="left" focusStyle="stack" id="1Tx-rB-zhM">
+                                    <connections>
+                                        <action selector="recoveryMinutesPickerActionWithIndex:" destination="ec8-30-LlR" id="oq6-M6-qLq"/>
+                                    </connections>
+                                </picker>
+                                <picker width="48" height="50" alignment="center" focusStyle="stack" id="qfh-lL-SSY">
+                                    <connections>
+                                        <action selector="recoveryPacePickerActionWithIndex:" destination="ec8-30-LlR" id="snM-F3-bGR"/>
+                                    </connections>
+                                </picker>
+                                <picker width="60" height="50" alignment="right" focusStyle="stack" id="b5F-sx-Ovh">
+                                    <connections>
+                                        <action selector="recoveryInclinePickerActionWithIndex:" destination="ec8-30-LlR" id="4Dm-Tx-8ub"/>
+                                    </connections>
+                                </picker>
+                            </items>
+                        </group>
+                        <group width="1" alignment="center" spacing="0.0" id="Twq-WT-D4m">
+                            <items>
+                                <label width="48" alignment="left" text="mins" textAlignment="center" id="Dsg-Lf-UQJ">
+                                    <color key="textColor" red="0.94901960780000005" green="0.95686274510000002" blue="1" alpha="0.79773116440000003" colorSpace="custom" customColorSpace="sRGB"/>
+                                    <fontDescription key="font" type="system" pointSize="11"/>
+                                </label>
+                                <label width="48" alignment="center" text="mph" textAlignment="center" id="rSf-IF-ycu">
+                                    <color key="textColor" red="0.94901960780000005" green="0.95686274510000002" blue="1" alpha="0.79773116440000003" colorSpace="custom" customColorSpace="sRGB"/>
+                                    <fontDescription key="font" type="system" pointSize="11"/>
+                                </label>
+                                <label width="60" alignment="right" text="incline" textAlignment="center" id="CC0-6A-LAj">
+                                    <color key="textColor" red="0.94901960780000005" green="0.95686274510000002" blue="1" alpha="0.79773116440000003" colorSpace="custom" customColorSpace="sRGB"/>
+                                    <fontDescription key="font" type="system" pointSize="11"/>
+                                </label>
+                            </items>
+                            <edgeInsets key="margins" left="0.0" right="0.0" top="0.0" bottom="12"/>
+                        </group>
+                        <button width="1" alignment="left" title="Button" id="Q1y-ZD-kW2">
+                            <connections>
+                                <action selector="saveButtonAction" destination="ec8-30-LlR" id="Zjq-gt-NHy"/>
+                            </connections>
+                        </button>
+                    </items>
+                    <edgeInsets key="margins" left="0.0" right="0.0" top="0.0" bottom="0.0"/>
+                    <connections>
+                        <outlet property="intensityInclinePicker" destination="XRT-pK-KV2" id="6a8-b7-6fc"/>
+                        <outlet property="intensityMinutesPicker" destination="cVH-NI-WXW" id="6fK-Fo-0K7"/>
+                        <outlet property="intensityPacePicker" destination="7NL-TU-q2g" id="XKU-dw-uyN"/>
+                        <outlet property="recoveryInclinePicker" destination="b5F-sx-Ovh" id="Yhf-Lm-mnR"/>
+                        <outlet property="recoveryMinutesPicker" destination="1Tx-rB-zhM" id="M4x-Sa-ykN"/>
+                        <outlet property="recoveryPacePicker" destination="qfh-lL-SSY" id="ZGQ-Cl-EVJ"/>
+                        <outlet property="saveButton" destination="Q1y-ZD-kW2" id="c9g-5p-nUJ"/>
+                    </connections>
+                </controller>
+            </objects>
+            <point key="canvasLocation" x="521.33333333333337" y="10.461538461538462"/>
+        </scene>
+        <!--NewStretchController-->
+        <scene sceneID="Lzt-Uh-pEa">
+            <objects>
+                <controller identifier="NewStretchController" id="g8p-JM-ran" customClass="NewStretchController" customModule="Run_WatchKit_App" customModuleProvider="target"/>
+            </objects>
+            <point key="canvasLocation" x="826" y="30"/>
         </scene>
         <!--ActiveWorkoutController-->
         <scene sceneID="fP3-Oa-g0X">
@@ -155,6 +310,13 @@
                 </controller>
             </objects>
             <point key="canvasLocation" x="522" y="340"/>
+        </scene>
+        <!--WorkoutSummaryController-->
+        <scene sceneID="wFU-Ww-gjc">
+            <objects>
+                <controller identifier="WorkoutSummaryController" id="koP-Wh-NPT" customClass="WorkoutSummaryController" customModule="Run_WatchKit_App" customModuleProvider="target"/>
+            </objects>
+            <point key="canvasLocation" x="826" y="340"/>
         </scene>
         <!--Notification Controller-->
         <scene sceneID="ZPc-GJ-vnh">

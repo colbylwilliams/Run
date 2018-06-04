@@ -42,8 +42,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
 
+    let healthStore = HKHealthStore()
     func applicationShouldRequestHealthAuthorization(_ application: UIApplication) {
-        HKHealthStore().handleAuthorizationForExtension { success, error in
+        healthStore.handleAuthorizationForExtension { success, error in
             print("Authorization \(success ? "successful" : "failed") \(error?.localizedDescription ?? "")")
         }
     }
