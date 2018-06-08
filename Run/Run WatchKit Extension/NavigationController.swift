@@ -62,7 +62,7 @@ class NavigationController: WKInterfaceController {
             
             switch selected {
             case .timed:
-                if WorkoutManager.shared.workout is TimedWorkout {
+                if RunManager.shared.run is TimedRun {
                     pushController(withName: "ActiveWorkoutController", context: nil)
                 }
             case .intervals, .stretch: print("[NavigationController] Stretch & Intervals Not Implemented")
@@ -103,7 +103,7 @@ class NavigationController: WKInterfaceController {
     
     
     func checkHealthKit() {
-        WorkoutManager.shared.checkHealthStoreAvailabilityAndAuthorization { available, error in
+        RunManager.shared.checkHealthStoreAvailabilityAndAuthorization { available, error in
             if available {
                 DispatchQueue.main.async {
                     self.loadTable()

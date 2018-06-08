@@ -31,7 +31,7 @@ class NewTimedController: WKInterfaceController {
     fileprivate let paceStride = stride(from: 1.0, through: 12.0, by: 0.1)
     fileprivate let inclineStride = stride(from: -3.0, through: 15.0, by: 0.5)
     
-    var workout: TimedWorkout!
+    var workout: TimedRun!
     
     override func awake(withContext context: Any?) {
         super.awake(withContext: context)
@@ -43,7 +43,7 @@ class NewTimedController: WKInterfaceController {
         pacePicker.setItems(paceStride.map { $0.pickerItem("mph") })
         inclinePicker.setItems(inclineStride.map { $0.pickerItemPercent("incline") })
         
-        workout = WorkoutManager.shared.workout as? TimedWorkout ?? TimedWorkout(pace: 0, incline: 0)
+        workout = RunManager.shared.run as? TimedRun ?? TimedRun(pace: 0, incline: 0)
         
         if workout.duration > 0 {
             let t = workout.durationComponents()
@@ -111,7 +111,7 @@ class NewTimedController: WKInterfaceController {
         workout.incline = incline
         workout.setDuration(hours: hours, minutes: minutes, seconds: seconds)
         
-        WorkoutManager.shared.workout = workout
+        RunManager.shared.run = workout
         
         dismiss()
     }

@@ -22,12 +22,13 @@
 		93B4F45C20BF2B8B00D8ADAE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 93B4F45B20BF2B8B00D8ADAE /* Assets.xcassets */; };
 		93B4F46F20BF332A00D8ADAE /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93B4F46E20BF332A00D8ADAE /* HealthKit.framework */; };
 		93B4F47220BF33AC00D8ADAE /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93B4F47120BF33AC00D8ADAE /* HealthKit.framework */; };
-		93B4F47420BF36E500D8ADAE /* WorkoutManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B4F47320BF36E500D8ADAE /* WorkoutManager.swift */; };
+		93B4F47420BF36E500D8ADAE /* RunManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B4F47320BF36E500D8ADAE /* RunManager.swift */; };
 		93B4F47620C08B6700D8ADAE /* ActiveWorkoutController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B4F47520C08B6700D8ADAE /* ActiveWorkoutController.swift */; };
 		93B4F47A20C0B1C700D8ADAE /* NavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B4F47920C0B1C700D8ADAE /* NavigationController.swift */; };
+		93D13CFB20C8FA6D0044BD28 /* SessionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93D13CFA20C8FA6D0044BD28 /* SessionDelegate.swift */; };
+		93D13CFC20C8FA6D0044BD28 /* SessionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93D13CFA20C8FA6D0044BD28 /* SessionDelegate.swift */; };
 		93F223F220C4590F00F50614 /* WorkoutSummaryController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F223F120C4590F00F50614 /* WorkoutSummaryController.swift */; };
-		93F223F420C45FAD00F50614 /* Workout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F223F320C45FAD00F50614 /* Workout.swift */; };
-		93F223F620C47FFD00F50614 /* WorkoutManagerError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F223F520C47FFC00F50614 /* WorkoutManagerError.swift */; };
+		93F223F420C45FAD00F50614 /* Run.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F223F320C45FAD00F50614 /* Run.swift */; };
 		93F223F820C4BFF300F50614 /* ActiveWorkoutController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F223F720C4BFF300F50614 /* ActiveWorkoutController.swift */; };
 		93F223FA20C4C73F00F50614 /* NewIntervalsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F223F920C4C73F00F50614 /* NewIntervalsController.swift */; };
 		93F223FC20C4C75B00F50614 /* NewTimedController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F223FB20C4C75B00F50614 /* NewTimedController.swift */; };
@@ -100,12 +101,12 @@
 		93B4F46E20BF332A00D8ADAE /* HealthKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HealthKit.framework; path = System/Library/Frameworks/HealthKit.framework; sourceTree = SDKROOT; };
 		93B4F47020BF339E00D8ADAE /* Run WatchKit Extension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Run WatchKit Extension.entitlements"; sourceTree = "<group>"; };
 		93B4F47120BF33AC00D8ADAE /* HealthKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HealthKit.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS4.3.sdk/System/Library/Frameworks/HealthKit.framework; sourceTree = DEVELOPER_DIR; };
-		93B4F47320BF36E500D8ADAE /* WorkoutManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutManager.swift; sourceTree = "<group>"; };
+		93B4F47320BF36E500D8ADAE /* RunManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunManager.swift; sourceTree = "<group>"; };
 		93B4F47520C08B6700D8ADAE /* ActiveWorkoutController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveWorkoutController.swift; sourceTree = "<group>"; };
 		93B4F47920C0B1C700D8ADAE /* NavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationController.swift; sourceTree = "<group>"; };
+		93D13CFA20C8FA6D0044BD28 /* SessionDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionDelegate.swift; sourceTree = "<group>"; };
 		93F223F120C4590F00F50614 /* WorkoutSummaryController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutSummaryController.swift; sourceTree = "<group>"; };
-		93F223F320C45FAD00F50614 /* Workout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Workout.swift; sourceTree = "<group>"; };
-		93F223F520C47FFC00F50614 /* WorkoutManagerError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutManagerError.swift; sourceTree = "<group>"; };
+		93F223F320C45FAD00F50614 /* Run.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Run.swift; sourceTree = "<group>"; };
 		93F223F720C4BFF300F50614 /* ActiveWorkoutController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveWorkoutController.swift; sourceTree = "<group>"; };
 		93F223F920C4C73F00F50614 /* NewIntervalsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewIntervalsController.swift; sourceTree = "<group>"; };
 		93F223FB20C4C75B00F50614 /* NewTimedController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewTimedController.swift; sourceTree = "<group>"; };
@@ -139,6 +140,7 @@
 				93B4F42F20BF2B8800D8ADAE /* Run */,
 				93B4F44320BF2B8A00D8ADAE /* Run WatchKit App */,
 				93B4F45220BF2B8A00D8ADAE /* Run WatchKit Extension */,
+				93D13CF920C8FA370044BD28 /* Shared */,
 				93B4F42E20BF2B8800D8ADAE /* Products */,
 				93B4F46D20BF332A00D8ADAE /* Frameworks */,
 			);
@@ -183,18 +185,17 @@
 			isa = PBXGroup;
 			children = (
 				93B4F47020BF339E00D8ADAE /* Run WatchKit Extension.entitlements */,
-				93F223F320C45FAD00F50614 /* Workout.swift */,
+				93F223F320C45FAD00F50614 /* Run.swift */,
+				93B4F47320BF36E500D8ADAE /* RunManager.swift */,
+				93B4F45520BF2B8A00D8ADAE /* ExtensionDelegate.swift */,
 				93B4F47920C0B1C700D8ADAE /* NavigationController.swift */,
 				93B4F47520C08B6700D8ADAE /* ActiveWorkoutController.swift */,
 				93F223F920C4C73F00F50614 /* NewIntervalsController.swift */,
 				93F223FD20C4CB9800F50614 /* NewStretchController.swift */,
 				93F223FB20C4C75B00F50614 /* NewTimedController.swift */,
 				93F223F120C4590F00F50614 /* WorkoutSummaryController.swift */,
-				93B4F45520BF2B8A00D8ADAE /* ExtensionDelegate.swift */,
 				93B4F45720BF2B8A00D8ADAE /* NotificationController.swift */,
 				93B4F45920BF2B8A00D8ADAE /* ComplicationController.swift */,
-				93B4F47320BF36E500D8ADAE /* WorkoutManager.swift */,
-				93F223F520C47FFC00F50614 /* WorkoutManagerError.swift */,
 				93B4F45B20BF2B8B00D8ADAE /* Assets.xcassets */,
 				93B4F45D20BF2B8B00D8ADAE /* Info.plist */,
 				93B4F45E20BF2B8B00D8ADAE /* PushNotificationPayload.apns */,
@@ -210,6 +211,14 @@
 				93B4F46E20BF332A00D8ADAE /* HealthKit.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		93D13CF920C8FA370044BD28 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				93D13CFA20C8FA6D0044BD28 /* SessionDelegate.swift */,
+			);
+			path = Shared;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -280,6 +289,7 @@
 				TargetAttributes = {
 					93B4F42C20BF2B8800D8ADAE = {
 						CreatedOnToolsVersion = 9.3.1;
+						LastSwiftMigration = 1000;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
 								enabled = 1;
@@ -291,9 +301,11 @@
 					};
 					93B4F43E20BF2B8A00D8ADAE = {
 						CreatedOnToolsVersion = 9.3.1;
+						LastSwiftMigration = 1000;
 					};
 					93B4F44D20BF2B8A00D8ADAE = {
 						CreatedOnToolsVersion = 9.3.1;
+						LastSwiftMigration = 1000;
 						SystemCapabilities = {
 							com.apple.BackgroundModes.watchos.extension = {
 								enabled = 1;
@@ -366,6 +378,7 @@
 				93B4F43320BF2B8800D8ADAE /* ViewController.swift in Sources */,
 				93B4F43120BF2B8800D8ADAE /* AppDelegate.swift in Sources */,
 				93F223F820C4BFF300F50614 /* ActiveWorkoutController.swift in Sources */,
+				93D13CFB20C8FA6D0044BD28 /* SessionDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -373,19 +386,19 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				93F223F620C47FFD00F50614 /* WorkoutManagerError.swift in Sources */,
 				93F223FA20C4C73F00F50614 /* NewIntervalsController.swift in Sources */,
 				93F2240020C4EDCD00F50614 /* UtilityExtensions.swift in Sources */,
 				93B4F45820BF2B8A00D8ADAE /* NotificationController.swift in Sources */,
 				93B4F47A20C0B1C700D8ADAE /* NavigationController.swift in Sources */,
 				93F223FE20C4CB9800F50614 /* NewStretchController.swift in Sources */,
 				93B4F45A20BF2B8A00D8ADAE /* ComplicationController.swift in Sources */,
-				93B4F47420BF36E500D8ADAE /* WorkoutManager.swift in Sources */,
+				93B4F47420BF36E500D8ADAE /* RunManager.swift in Sources */,
 				93B4F45620BF2B8A00D8ADAE /* ExtensionDelegate.swift in Sources */,
-				93F223F420C45FAD00F50614 /* Workout.swift in Sources */,
+				93F223F420C45FAD00F50614 /* Run.swift in Sources */,
 				93F223FC20C4C75B00F50614 /* NewTimedController.swift in Sources */,
 				93F223F220C4590F00F50614 /* WorkoutSummaryController.swift in Sources */,
 				93B4F47620C08B6700D8ADAE /* ActiveWorkoutController.swift in Sources */,
+				93D13CFC20C8FA6D0044BD28 /* SessionDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -466,6 +479,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 3;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -483,12 +497,14 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				VERSIONING_SYSTEM = "apple-generic";
+				WATCHOS_DEPLOYMENT_TARGET = 5.0;
 			};
 			name = Debug;
 		};
@@ -526,6 +542,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 3;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -537,12 +554,14 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				WATCHOS_DEPLOYMENT_TARGET = 5.0;
 			};
 			name = Release;
 		};
@@ -563,9 +582,8 @@
 				PRODUCT_NAME = "${TARGET_NAME}";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 4.3;
 			};
 			name = Debug;
 		};
@@ -586,9 +604,8 @@
 				PRODUCT_NAME = "${TARGET_NAME}";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 4.3;
 			};
 			name = Release;
 		};
@@ -605,9 +622,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 4.3;
 			};
 			name = Debug;
 		};
@@ -624,9 +640,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 4.3;
 			};
 			name = Release;
 		};
@@ -644,7 +659,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.colbylwilliams.Run;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -663,7 +678,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.colbylwilliams.Run;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

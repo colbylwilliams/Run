@@ -7,11 +7,24 @@
 //
 
 import WatchKit
+import WatchConnectivity
 
 class ExtensionDelegate: NSObject, WKExtensionDelegate {
 
+    private lazy var sessionDelegate: SessionDelegate = { return SessionDelegate() }()
+
+
+    override init() {
+        super.init()
+        
+        if WCSession.isSupported() {
+            WCSession.default.delegate = sessionDelegate
+            WCSession.default.activate()
+        }
+    }
+    
     func applicationDidFinishLaunching() {
-        // Perform any final initialization of your application.
+        print("Run: \(Bundle.main.bundleIdentifier ?? "Run") \(Bundle.main.infoDictionary?["CFBundleShortVersionString"] ?? "?") (\(Bundle.main.infoDictionary?["CFBundleVersion"] ?? "?"))")
     }
 
     func applicationDidBecomeActive() {

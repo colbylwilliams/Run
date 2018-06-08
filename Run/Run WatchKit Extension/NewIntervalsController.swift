@@ -33,8 +33,8 @@ class NewIntervalsController: WKInterfaceController {
     fileprivate let inclineStride = stride(from: -3.0, through: 15.0, by: 0.5)
 
     
-    //var intensityWorkout: WorkoutInterval!
-    //var recoveryWorkout: WorkoutInterval!
+    //var intensityWorkout: RunInterval!
+    //var recoveryWorkout: RunInterval!
 
     override func awake(withContext context: Any?) {
         super.awake(withContext: context)
@@ -56,12 +56,12 @@ class NewIntervalsController: WKInterfaceController {
         recoveryInclinePicker.setSelectedItemIndex(18)  // 6.0%
 
         
-//        if let workout = WorkoutManager.shared.workout as? IntervalWorkout {
+//        if let workout = RunManager.shared.workout as? IntervalRun {
 //            intensityWorkout = workout.intensityInterval
 //            recoveryWorkout = workout.recoveryInterval
 //        } else {
-//            intensityWorkout = WorkoutInterval(pace: 0, incline: 0)
-//            recoveryWorkout = WorkoutInterval(pace: 0, incline: 0)
+//            intensityWorkout = RunInterval(pace: 0, incline: 0)
+//            recoveryWorkout = RunInterval(pace: 0, incline: 0)
 //        }
     }
     
@@ -107,9 +107,9 @@ class NewIntervalsController: WKInterfaceController {
             fatalError()
         }
         
-        WorkoutManager.shared.workout = IntervalWorkout(
-            intensity: WorkoutInterval(pace: intensityPace, incline: intensityIncline, minutes: intensityMinutes),
-            recovery:  WorkoutInterval(pace: recoveryPace, incline: recoveryIncline, minutes: recoveryMinutes)
+        RunManager.shared.run = IntervalRun(
+            intensity: RunInterval(pace: intensityPace, incline: intensityIncline, minutes: intensityMinutes),
+            recovery:  RunInterval(pace: recoveryPace, incline: recoveryIncline, minutes: recoveryMinutes)
         )
         
         dismiss()

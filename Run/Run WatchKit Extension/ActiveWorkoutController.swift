@@ -31,21 +31,19 @@ class ActiveWorkoutController: WKInterfaceController {
         updateHeartRate(0)
         updateWorkoutButton(.start)
         
-        WorkoutManager.shared.heartRateUpdated = updateHeartRate
-        WorkoutManager.shared.workoutStateChanged = workoutStateChanged
-        WorkoutManager.shared.timerDatesUpdated = updateTimers
+        RunManager.shared.heartRateUpdated = updateHeartRate
+        RunManager.shared.workoutStateChanged = workoutStateChanged
+        RunManager.shared.timerDatesUpdated = updateTimers
         
         setupTimers()
-    }
-    
-    
-    func startWorkout() {
+        
         do {
-            try WorkoutManager.shared.startWorkout()
+            try RunManager.shared.prepare()
         } catch {
-            print("[ActiveWorkoutController] Error: Unable to start workout: \(error)")
+            print("[ActiveWorkoutController] Error: Unable to prepare workout: \(error.localizedDescription)")
         }
     }
+    
     
     @IBAction func timerGroupButtonAction() {
         timeIncreasing = !timeIncreasing
@@ -55,38 +53,39 @@ class ActiveWorkoutController: WKInterfaceController {
     
     @IBAction func workoutButtonAction() {
 
-        let workoutState = WorkoutManager.shared.workoutState
+        let workoutState = RunManager.shared.workoutState
 
+        print("workoutState: \(workoutState.name)")
+        
         switch workoutState {
-        case .notStarted: startWorkout()
-        case .running:    WorkoutManager.shared.pauseWorkout()
-        case .paused:     WorkoutManager.shared.resumeWorkout()
+        case .prepared,
+             .notStarted: RunManager.shared.startActivity()
+        case .running:    RunManager.shared.pause()
+        case .paused:     RunManager.shared.resume()
+        case .stopped:    RunManager.shared.end()
         case .ended:      print("[ActiveWorkoutController] Error: Save Workout Not Implemented")
         }
     }
     
 
-    func updateTimers (_ increasing:Date?, _ decreasing:Date?) {
+    func updateTimers (_ session: HKWorkoutSession, _ increasing:Date?, _ decreasing:Date?) {
+        
         DispatchQueue.main.async {
             if let i = increasing, let d = decreasing {
                 self.increasingTimer.setDate(i)
                 self.decreasingTimer.setDate(d)
-                
-                self.increasingTimer.start()
-                self.decreasingTimer.start()
-            } else {
-                self.increasingTimer.stop()
-                self.decreasingTimer.stop()
             }
+            session.state == .running ? self.increasingTimer.start() : self.increasingTimer.stop()
+            session.state == .running ? self.decreasingTimer.start() : self.decreasingTimer.stop()
         }
     }
 
     func setupTimers() {
         
-        if let workout = WorkoutManager.shared.workout {
+        if let run = RunManager.shared.run {
             
             let now = Date()
-            let end = Date(timeInterval: workout.duration + 1, since: now)
+            let end = Date(timeInterval: run.duration + 1, since: now)
             
             increasingTimer.setDate(now)
             decreasingTimer.setDate(end)
@@ -94,34 +93,23 @@ class ActiveWorkoutController: WKInterfaceController {
     }
     
     
-    func updateWorkoutButton(_ state:WorkoutButtonState) {
+    func updateWorkoutButton(_ state: WorkoutButtonState) {
         workoutButton.setBackgroundColor(state.backgroundColor)
         workoutButton.setAttributedTitle(state.attributedTitle)
     }
     
     
-    func updateHeartRate(_ bpm:Int) {
+    func updateHeartRate(_ bpm: Int) {
         DispatchQueue.main.async {
             self.heartRateLabel.setText(bpm > 0 ? String(bpm) : "--")
             self.heartRateUnitLabel.setText(bpm > 0 ? "BPM" : nil)
         }
     }
     
-    func workoutStateChanged (_ to: HKWorkoutSessionState, _ from: HKWorkoutSessionState, _ date: Date) {
-        
+    func workoutStateChanged (_ session: HKWorkoutSession, _ to: HKWorkoutSessionState, _ from: HKWorkoutSessionState, _ date: Date) {
         DispatchQueue.main.async {
             self.updateWorkoutButton(WorkoutButtonState(forState: to))
-            //self.startTimers()
         }
-
-//        let start = WorkoutManager.shared.startDate != nil ? "\(WorkoutManager.shared.startDate!)" : ""
-//
-//        switch to {
-//        case .notStarted:   print("[ActiveWorkoutController] State Changed: Not Started \(start) \(date)")
-//        case .running:      print("[ActiveWorkoutController] State Changed: Running \(start) \(date)")
-//        case .paused:       print("[ActiveWorkoutController] State Changed: Paused \(start) \(date)")
-//        case .ended:        print("[ActiveWorkoutController] State Changed: Ended (Save Workout) \(start) \(date)")
-//        }
     }
 }
 
@@ -129,13 +117,16 @@ enum WorkoutButtonState {
     case start
     case pause
     case resume
+    case end
     case save
     
     init(forState state: HKWorkoutSessionState) {
         switch state {
-        case .notStarted:   self = .start
+        case .prepared,
+             .notStarted:   self = .start
         case .running:      self = .pause
         case .paused:       self = .resume
+        case .stopped:      self = .end
         case .ended:        self = .save
         }
     }
@@ -145,6 +136,7 @@ enum WorkoutButtonState {
         case .start:  return "Start Workout"
         case .pause:  return "Pause Workout"
         case .resume: return "Resume Workout"
+        case .end:    return "Finish Workout"
         case .save:   return "Save Workout"
         }
     }
@@ -153,6 +145,7 @@ enum WorkoutButtonState {
         switch self {
         case .start, .resume, .save:  return #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
         case .pause: return #colorLiteral(red: 1, green: 0.231372549, blue: 0.1882352941, alpha: 1)
+        case .end:   return #colorLiteral(red: 0.9490196078, green: 0.9568627451, blue: 1, alpha: 1)
         }
     }
     
@@ -160,6 +153,7 @@ enum WorkoutButtonState {
         switch self {
         case .start, .resume:  return #colorLiteral(red: 0.01568627451, green: 0.8705882353, blue: 0.4431372549, alpha: 1)
         case .pause: return #colorLiteral(red: 1, green: 0.231372549, blue: 0.1882352941, alpha: 0.17)
+        case .end:   return #colorLiteral(red: 1, green: 0.231372549, blue: 0.1882352941, alpha: 1)
         case .save:  return #colorLiteral(red: 0, green: 0.9607843137, blue: 0.9176470588, alpha: 1)
         }
     }
