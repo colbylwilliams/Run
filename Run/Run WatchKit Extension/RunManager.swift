@@ -99,8 +99,9 @@ class RunManager: NSObject, HKWorkoutSessionDelegate, HKLiveWorkoutBuilderDelega
     }
 
     func startActivity() {
-        workoutSession.startActivity()
-        workoutBuilder.beginCollection(withStart: Date()) { (success, error) in
+        let date = Date()
+        workoutSession.startActivity(with: date)
+        workoutBuilder.beginCollection(withStart: date) { (success, error) in
             if let e = error { print(e.localizedDescription) }
         }
     }
@@ -109,7 +110,7 @@ class RunManager: NSObject, HKWorkoutSessionDelegate, HKLiveWorkoutBuilderDelega
     
     func resume() { workoutSession.resume() }
     
-    func stopActivity() { workoutSession.stopActivity() }
+    func stopActivity() { workoutSession.stopActivity(with: Date()) }
     
     func end() { workoutSession.end() }
 

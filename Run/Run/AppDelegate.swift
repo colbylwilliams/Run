@@ -22,7 +22,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         
-        print("Run: \(Bundle.main.bundleIdentifier ?? "Run") \(Bundle.main.infoDictionary?["CFBundleShortVersionString"] ?? "?") (\(Bundle.main.infoDictionary?["CFBundleVersion"] ?? "?"))")
+        print("HealthClub: \(Bundle.main.bundleIdentifier ?? "HealthClub") \(Bundle.main.infoDictionary?["CFBundleShortVersionString"] ?? "?") (\(Bundle.main.infoDictionary?["CFBundleVersion"] ?? "?"))")
 
         if WCSession.isSupported() {
             WCSession.default.delegate = sessionDelegate
@@ -39,4 +39,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
 }
+
+// other use cases
+// specific shelves (problem == opprotunitY)
+// benchmark
+// can we demo?
+// getting data
+
 
